@@ -17,6 +17,7 @@ public class EarthquakeViewModel extends AndroidViewModel {
     public EarthquakeViewModel(Application application) {
         super(application);
         earthquakeRepository = new EarthquakeRepository();
+        // Assign the data from callWebService method in EarthquakeRepository on the LiveData
         earthquakeObservableData = earthquakeRepository.callWebService();
     }
 

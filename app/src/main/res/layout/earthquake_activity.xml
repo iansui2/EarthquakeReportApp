@@ -14,20 +14,30 @@
         android:background="#FFFFFF"
         tools:listitem="@layout/earthquake_item"/>
 
-<!--    &lt;!&ndash; Empty view is only visible when the list has no items. &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:id="@+id/empty_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:textAppearance="?android:textAppearanceMedium"/>-->
+    <!-- Loading indicator is only shown before the first load -->
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 
-<!--    &lt;!&ndash; Loading indicator is only shown before the first load &ndash;&gt;-->
-<!--    <ProgressBar-->
-<!--        android:id="@+id/loading_indicator"-->
-<!--        style="@style/Widget.AppCompat.ProgressBar"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_centerInParent="true"/>-->
+    <!-- Empty view and Try again button is only visible when the list has no items. -->
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textAppearance="?android:textAppearanceMedium"/>
+
+    <Button
+        android:id="@+id/try_again_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/empty_view"
+        android:text="@string/try_again"
+        android:textAllCaps="true"
+        android:textAppearance="?android:textAppearanceMedium"/>
 
 </RelativeLayout>

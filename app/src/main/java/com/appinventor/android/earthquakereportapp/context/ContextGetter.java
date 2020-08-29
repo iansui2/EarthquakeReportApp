@@ -9,9 +9,11 @@ public class ContextGetter extends Application {
 
     public void onCreate(){
         super.onCreate();
+        // Gets the context from Application
         context = getApplicationContext();
     }
 
+    // Returns the context
     public static Context getAppContext() {
         return context;
     }

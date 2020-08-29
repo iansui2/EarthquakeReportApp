@@ -7,7 +7,7 @@ import retrofit2.http.Query;
 
 public interface ApiInterface {
     @GET("fdsnws/event/1/query")
-    // Creates a call of Earthquakes Objects
+    // Creates a call of ResponseBody
     Call<ResponseBody> getEarthquakes(@Query("format") String format,
                                       @Query("eventtype") String eventType,
                                       @Query("orderby") String orderBy,

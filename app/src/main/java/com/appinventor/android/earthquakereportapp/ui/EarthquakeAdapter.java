@@ -28,6 +28,7 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
 
     @Override
     public EarthquakeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Create a View and inflate the layout of earthquake_item
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.earthquake_item, parent, false);
         return new EarthquakeHolder(itemView);
@@ -35,32 +36,47 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
 
     @Override
     public void onBindViewHolder(@NonNull EarthquakeHolder holder, int position) {
+        // Get the current earthquake property
         Earthquake currentEarthquakeProperty = allEarthquakes.get(position);
 
         String primaryLocation;
         String locationOffset;
 
+        // Get the magnitude of the current earthquake property
         Double magnitude = currentEarthquakeProperty.getMag();
+        // Format the value of magnitude
         String formattedMagnitude = formatMagnitude(magnitude);
 
+        // Get the background of the textViewMagnitude
         GradientDrawable magnitudeSquare = (GradientDrawable) holder.textViewMagnitude.getBackground();
 
+        // Get the magnitude color of the magnitude of the current earthquake property
         int magnitudeColor = getMagnitudeColor(currentEarthquakeProperty.getMag());
+        // Set the color of the textViewMagnitude
         magnitudeSquare.setColor(magnitudeColor);
 
+        // Get the place of the current earthquake property
         String originalLocation = currentEarthquakeProperty.getPlace();
 
         if (originalLocation.contains(Constants.LOCATION_SEPARATOR)) {
+            // Split the parts of the array from the location separator
             String [] parts = originalLocation.split(Constants.LOCATION_SEPARATOR);
+            // Combine the 0th index of the array to the location separator
             locationOffset = parts[0] + Constants.LOCATION_SEPARATOR;
+            // Get the 1st index of the array
             primaryLocation = parts[1];
         } else {
+            // Get the string near the
             locationOffset = getAppContext().getString(R.string.near_the);
+            // Get the string originalLocation
             primaryLocation = originalLocation;
         }
 
+        // Create a date object
         Date dateObject = new Date(currentEarthquakeProperty.getTime());
+        // Format the date
         String formattedDate = formatDate(dateObject);
+        // Format the time
         String formattedTime = formatTime(dateObject);
 
         holder.textViewMagnitude.setText(formattedMagnitude);
@@ -77,6 +93,7 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
 
     public void setAllEarthquakes(List<Earthquake> allEarthquakes) {
         this.allEarthquakes = allEarthquakes;
+        // Notify the RecyclerView that the data set has changed.
         notifyDataSetChanged();
     }
 
@@ -99,6 +116,7 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
 
     private int getMagnitudeColor(double magnitude) {
         int magnitudeColorResourceId;
+        // Convert the double data type to int date type with math.floor
         int magnitudeFloor = (int) Math.floor(magnitude);
         switch (magnitudeFloor) {
             case 0:
@@ -133,21 +151,33 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
                 magnitudeColorResourceId = R.color.magnitude10plus;
                 break;
         }
+        // Return the magnitudeColorResourceId
         return ContextCompat.getColor(getAppContext(), magnitudeColorResourceId);
     }
 
     private String formatMagnitude(double magnitude) {
+        // Format the magnitude to one decimal place
         DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
         return magnitudeFormat.format(magnitude);
     }
 
     private String formatDate(Date dateObject) {
+        // Format the date to month, day and year
         SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy");
         return dateFormat.format(dateObject);
     }
 
     private String formatTime(Date dateObject) {
+        // Format the time to hours and minutes
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
         return timeFormat.format(dateObject);
+    }
+
+    public void clear() {
+        int size = allEarthquakes.size();
+        // Clear the list
+        allEarthquakes.clear();
+        // Notify the RecyclerView of the item range removed
+        notifyItemRangeRemoved(0, size);
     }
 }
