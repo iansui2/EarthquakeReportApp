@@ -10,8 +10,8 @@ public interface ApiInterface {
     @GET("fdsnws/event/1/query")
     // Creates a call of ResponseBody
     Call<ResponseBody> getEarthquakes(@Query("format") String format,
-                                            @Query("eventtype") String eventType,
-                                            @Query("orderby") String orderBy,
-                                            @Query("minmag") int minMag,
-                                            @Query("limit") int limit);
+                                      @Query("eventtype") String eventType,
+                                      @Query("orderby") String orderBy,
+                                      @Query("minmag") int minMag,
+                                      @Query("limit") int limit);
 }
