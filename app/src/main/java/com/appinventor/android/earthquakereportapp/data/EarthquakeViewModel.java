@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
 
@@ -17,7 +18,6 @@ public class EarthquakeViewModel extends AndroidViewModel {
     public EarthquakeViewModel(Application application) {
         super(application);
         earthquakeRepository = new EarthquakeRepository();
-        // Assign the data from callWebService method in EarthquakeRepository on the LiveData
         earthquakeObservableData = earthquakeRepository.callWebService();
     }
 

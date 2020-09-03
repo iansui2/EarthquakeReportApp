@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.appinventor.android.earthquakereportapp.R;
 import com.appinventor.android.earthquakereportapp.network.ConnectivityInterceptor;
+import com.appinventor.android.earthquakereportapp.network.NetworkUtil;
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
 import com.appinventor.android.earthquakereportapp.variables.Constants;
 import com.appinventor.android.earthquakereportapp.variables.Global;
@@ -37,11 +38,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.appinventor.android.earthquakereportapp.context.ContextGetter.*;
+import static com.appinventor.android.earthquakereportapp.network.NetworkUtil.*;
 import static com.appinventor.android.earthquakereportapp.network.NetworkUtil.networkAvailable;
 
 public class EarthquakeRepository {
 
     public List<Earthquake> allEarthquakes = new ArrayList<>();
+    static ConnectivityInterceptor interceptor = new ConnectivityInterceptor();
 
     private static OkHttpClient okHttpClientBuilder() {
         // Building of OkHttpClient
@@ -49,6 +52,7 @@ public class EarthquakeRepository {
         return httpClient.readTimeout(50, TimeUnit.SECONDS)
                 .connectTimeout(50, TimeUnit.SECONDS)
                 .writeTimeout(55, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build(); // Builds up OkHttpClient
     }
 
@@ -107,7 +111,7 @@ public class EarthquakeRepository {
                         // Post the value of the list to the LiveData
                         earthquakeList.postValue(allEarthquakes);
                     } else {
-                        Log.e("EarthquakeActivity", String.valueOf(R.string.failure));
+                        Log.e("EarthquakeRepository", "onResponse: Failure of loading the earthquakes");
                         // Post the value of the list to the LiveData
                         earthquakeList.postValue(allEarthquakes);
                     }
@@ -116,7 +120,7 @@ public class EarthquakeRepository {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("EarthquakeActivity", String.valueOf(R.string.failure));
+                    Log.e("EarthquakeRepository", "onFailure: Failure of loading the earthquakes");
                     // Post the value of the list to the LiveData
                     earthquakeList.postValue(allEarthquakes);
                 }

@@ -1,6 +1,6 @@
 package com.appinventor.android.earthquakereportapp.network;
 
-import android.content.Context;
+import org.json.JSONException;
 
 import java.io.IOException;
 
@@ -10,17 +10,26 @@ import okhttp3.Response;
 
 public class ConnectivityInterceptor implements Interceptor {
 
-    private Context mContext;
-
-    public ConnectivityInterceptor(Context context) {
-        mContext = context;
-    }
-
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request().newBuilder().build();
         Response response = chain.proceed(request);
+        if (response.code() != 200) {
+            Response anotherResponse = null;
+            anotherResponse = makeRefreshCall(request, chain);
+            return response;
+        }
         return response;
+    }
+
+    private Response makeRefreshCall (Request request, Chain chain) throws IOException {
+        Request newRequest;
+        newRequest = request.newBuilder().build();
+        Response newResponse = chain.proceed(newRequest);
+        while (newResponse.code() != 200) {
+            makeRefreshCall(newRequest, chain);
+        }
+        return newResponse;
     }
 
 }

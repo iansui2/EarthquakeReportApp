@@ -1,6 +1,7 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -26,9 +27,6 @@ import retrofit2.Call;
 import static com.appinventor.android.earthquakereportapp.network.NetworkUtil.*;
 
 public class EarthquakeActivity extends AppCompatActivity {
-
-    private EarthquakeRepository earthquakeRepository;
-    private Call<ResponseBody> call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,13 +105,19 @@ public class EarthquakeActivity extends AppCompatActivity {
                     // Make the progress bar invisible
                     progressBar.setVisibility(View.INVISIBLE);
 
+                    // Set empty state text to display "No earthquakes found."
+                    emptyStateTextView.setText(R.string.no_earthquakes);
+
                     // Clear the adapter
                     adapter.clear();
 
+                    if (earthquakes != null && !earthquakes.isEmpty()) {
                         // Add the data to the RecyclerView
                         adapter.setAllEarthquakes(earthquakes);
                         // Set empty state text to display nothing
                         emptyStateTextView.setText("");
+                    }
+
                 } else {
                     // Make the progress bar invisible
                     progressBar.setVisibility(View.INVISIBLE);
