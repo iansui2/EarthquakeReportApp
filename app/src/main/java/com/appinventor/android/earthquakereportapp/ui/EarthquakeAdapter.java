@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appinventor.android.earthquakereportapp.R;
+import com.appinventor.android.earthquakereportapp.context.ContextGetter;
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
 import com.appinventor.android.earthquakereportapp.variables.Constants;
 

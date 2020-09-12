@@ -1,17 +1,12 @@
 package com.appinventor.android.earthquakereportapp.data;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.appinventor.android.earthquakereportapp.R;
+import com.appinventor.android.earthquakereportapp.network.ApiInterface;
 import com.appinventor.android.earthquakereportapp.network.ConnectivityInterceptor;
-import com.appinventor.android.earthquakereportapp.network.NetworkUtil;
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
 import com.appinventor.android.earthquakereportapp.variables.Constants;
 import com.appinventor.android.earthquakereportapp.variables.Global;
@@ -37,14 +32,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.appinventor.android.earthquakereportapp.context.ContextGetter.*;
-import static com.appinventor.android.earthquakereportapp.network.NetworkUtil.*;
-import static com.appinventor.android.earthquakereportapp.network.NetworkUtil.networkAvailable;
-
 public class EarthquakeRepository {
 
-    public List<Earthquake> allEarthquakes = new ArrayList<>();
-    static ConnectivityInterceptor interceptor = new ConnectivityInterceptor();
+    public static List<Earthquake> allEarthquakes = new ArrayList<>();
+    public static ConnectivityInterceptor interceptor = new ConnectivityInterceptor();
+    private Retrofit retrofit;
+    private Call<ResponseBody> call;
+    private Call<ResponseBody> retryCall;
+    private Callback<ResponseBody> callback;
+
+    final MutableLiveData<List<Earthquake>> earthquakeList = new MutableLiveData<>();
 
     private static OkHttpClient okHttpClientBuilder() {
         // Building of OkHttpClient
@@ -53,24 +50,23 @@ public class EarthquakeRepository {
                 .connectTimeout(50, TimeUnit.SECONDS)
                 .writeTimeout(55, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
+                .retryOnConnectionFailure(true)
                 .build(); // Builds up OkHttpClient
     }
 
-
     public LiveData<List<Earthquake>> callWebService() {
-        final MutableLiveData<List<Earthquake>> earthquakeList = new MutableLiveData<>();
             // Building of Retrofit
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Constants.BASE_URL) // This is the base url: https://earthquake.usgs.gov/
-                    .addConverterFactory(GsonConverterFactory.create()) // Adds a GsonConverterFactory
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
                     .client(okHttpClientBuilder())
-                    .build(); // Builds up Retrofit
+                    .build();
 
             // Creates an instance of Retrofit Interface
             ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
             // Creates a call of Response Body
-            Call<ResponseBody> call = apiInterface.getEarthquakes(Constants.FORMAT, Constants.EVENT_TYPE, Global.orderBy,
+            call = apiInterface.getEarthquakes(Constants.FORMAT, Constants.EVENT_TYPE, Global.orderBy,
                     Global.minMag, Global.limit);
 
             // Executing the call on a background thread
@@ -101,21 +97,14 @@ public class EarthquakeRepository {
                             }
                         }
 
-                        try {
-                            // Make the main thread sleep
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
+                        Log.e("EarthquakeRepository", response.code() + ": Success of loading the earthquakes");
                         // Post the value of the list to the LiveData
                         earthquakeList.postValue(allEarthquakes);
                     } else {
-                        Log.e("EarthquakeRepository", "onResponse: Failure of loading the earthquakes");
+                        Log.e("EarthquakeRepository", response.code() + ": Failure of loading the earthquakes");
                         // Post the value of the list to the LiveData
                         earthquakeList.postValue(allEarthquakes);
                     }
-
                 }
 
                 @Override
@@ -123,9 +112,22 @@ public class EarthquakeRepository {
                     Log.e("EarthquakeRepository", "onFailure: Failure of loading the earthquakes");
                     // Post the value of the list to the LiveData
                     earthquakeList.postValue(allEarthquakes);
+                    // Set the callback to this call using this function
+                    setCallback(this);
+                    // Clone the call and assign it to a variable
+                    retryCall = call.clone();
                 }
             });
-        return earthquakeList;
+       return earthquakeList;
+    }
+
+    private void setCallback(Callback<ResponseBody> responseBodyCallback) {
+        callback = responseBodyCallback;
+    }
+
+    public void getRetryCallback() {
+        // Execute the call on a background thread using the callback
+        retryCall.enqueue(callback);
     }
 
     private static String readFromStream(InputStream inputStream) throws IOException {
@@ -150,7 +152,7 @@ public class EarthquakeRepository {
         return output.toString();
     }
 
-    private List<Earthquake> parseJson (String response) throws JSONException {
+    private static List<Earthquake> parseJson(String response) throws JSONException {
         List<Earthquake> earthquakeResults = new ArrayList<>();
         // Creates a JSONObject with the value coming from the String response
         JSONObject jsonObject = new JSONObject(response);
