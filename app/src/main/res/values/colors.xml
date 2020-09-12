@@ -8,13 +8,13 @@
     <color name="textColorEarthquakeLocation">#2B3D4D</color>
 
     <!-- Primary color of the app (shown in the app bar) -->
-    <color name="colorPrimary">#2B3D4D</color>
+    <color name="colorPrimary">#F0514B</color>
 
     <!-- Primary dark color of the app (shown in the status bar) -->
-    <color name="colorPrimaryDark">#23303D</color>
+    <color name="colorPrimaryDark">#C0403C</color>
 
     <!-- Accent color of the app -->
-    <color name="colorAccent">#10CAC9</color>
+    <color name="colorAccent">#F0514B</color>
 
     <!-- Color for an properties with magnitude 0 and 2 -->
     <color name="magnitude1">#4A7BA7</color>
