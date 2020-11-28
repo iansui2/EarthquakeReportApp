@@ -1,5 +1,6 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -54,7 +55,7 @@ public class EarthquakeActivity extends AppCompatActivity {
     private boolean isLoading = false;
     private boolean isRefreshing = false;
 
-    private EarthquakeRepository earthquakeRepository;
+    private Dialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,20 +96,16 @@ public class EarthquakeActivity extends AppCompatActivity {
             }
         });
 
-        final ImageView iconImageView = findViewById(R.id.no_internet_image);
-        final TextView emptyStateTextView = findViewById(R.id.empty_view_summary);
-        final TextView emptyStateTextViewDescription = findViewById(R.id.empty_view_description);
-        final Button tryAgainButton = findViewById(R.id.try_again_button);
         mainProgressBar = findViewById(R.id.main_loading_indicator);
 
         final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setVisibility(View.INVISIBLE);
 
-        // Make the image view invisible
-        iconImageView.setVisibility(View.INVISIBLE);
+        alertDialog = new Dialog(EarthquakeActivity.this);
+        alertDialog.setContentView(R.layout.custom_dialog);
+        Objects.requireNonNull(alertDialog.getWindow()).setLayout(1000, 1000);
 
-        // Make the button invisible
-        tryAgainButton.setVisibility(View.INVISIBLE);
+        final Button tryAgainButton = alertDialog.findViewById(R.id.try_again_button);
 
         linearLayoutManager = new LinearLayoutManager(this);
 
@@ -164,7 +161,10 @@ public class EarthquakeActivity extends AppCompatActivity {
                 // Set the LiveData for the RecyclerView
                 setupList(earthquakes);
                 // Call the tryAgain function when the button is clicked
-                tryAgainButton.setOnClickListener(v -> tryAgain(earthquakes));
+                tryAgainButton.setOnClickListener(v -> {
+                    tryAgain(earthquakes);
+                    alertDialog.cancel();
+                });
                 swipeRefreshLayout.setOnRefreshListener(() -> {
                     swipeRefreshLayout.setRefreshing(true);
                     refresh(earthquakes);
@@ -187,14 +187,6 @@ public class EarthquakeActivity extends AppCompatActivity {
                         } else {
                             showMainProgressBar(false);
                         }
-                        // Make the image view invisible
-                        iconImageView.setVisibility(View.INVISIBLE);
-                        // Set the text of the text view to nothing
-                        emptyStateTextView.setText("");
-                        // Set the text of the text view to nothing
-                        emptyStateTextViewDescription.setText("");
-                        // Make the button invisible
-                        tryAgainButton.setVisibility(View.INVISIBLE);
                     }
 
                     public void onFinish() {
@@ -211,8 +203,6 @@ public class EarthquakeActivity extends AppCompatActivity {
                                 if (earthquakes != null && !earthquakes.isEmpty()) {
                                     // Add the data to the RecyclerView
                                     adapter.setAllEarthquakes(earthquakes);
-                                    // Set empty state text to display nothing
-                                    emptyStateTextView.setText("");
                                 } else {
                                     Log.e("EarthquakeActivity", "Adapter is null and empty");
                                 }
@@ -222,14 +212,7 @@ public class EarthquakeActivity extends AppCompatActivity {
                                 showMainProgressBar(false);
                                 swipeRefreshLayout.setRefreshing(false);
                                 swipeRefreshLayout.setVisibility(View.INVISIBLE);
-                                // Make the image view visible
-                                iconImageView.setVisibility(View.VISIBLE);
-                                // Set the text of the text view to "No Internet Connection"
-                                emptyStateTextView.setText(R.string.no_internet_connection);
-                                // Set the text of the text view to "Please Check your Internet Connection"
-                                emptyStateTextViewDescription.setText(R.string.check_internet_connection);
-                                // Make the button visible
-                                tryAgainButton.setVisibility(View.VISIBLE);
+                                alertDialog.show();
                             }
                     }
                 }.start();
@@ -239,28 +222,11 @@ public class EarthquakeActivity extends AppCompatActivity {
 
             public void tryAgain(List<Earthquake> earthquakes) {
                 earthquakeViewModel.retryCall();
-                // Make the image view invisible
-                iconImageView.setVisibility(View.INVISIBLE);
-                // Set the text of the text view to nothing
-                emptyStateTextView.setText("");
-                // Set the text of the text view to nothing
-                emptyStateTextViewDescription.setText("");
-                // Make the button invisible
-                tryAgainButton.setVisibility(View.INVISIBLE);
-                // Make the progress bar visible
                 showMainProgressBar(true);
             }
 
             public void refresh(List<Earthquake> earthquakes) {
                 earthquakeViewModel.retryCall();
-                // Make the image view invisible
-                iconImageView.setVisibility(View.INVISIBLE);
-                // Set the text of the text view to nothing
-                emptyStateTextView.setText("");
-                // Set the text of the text view to nothing
-                emptyStateTextViewDescription.setText("");
-                // Make the button invisible
-                tryAgainButton.setVisibility(View.INVISIBLE);
             }
         });
     }
