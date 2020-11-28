@@ -1,4 +1,4 @@
-package com.appinventor.android.earthquakereportapp.context;
+package com.appinventor.android.earthquakereportapp.util;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -9,7 +9,7 @@ public class ContextGetter extends Application {
     @SuppressLint("StaticFieldLeak")
     private static Context context;
 
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         // Gets the context from Application
         context = getApplicationContext();

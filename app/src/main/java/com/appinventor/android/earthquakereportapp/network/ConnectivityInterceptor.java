@@ -1,7 +1,5 @@
 package com.appinventor.android.earthquakereportapp.network;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 
 import okhttp3.Interceptor;

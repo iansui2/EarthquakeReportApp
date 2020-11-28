@@ -1,5 +1,6 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appinventor.android.earthquakereportapp.R;
-import com.appinventor.android.earthquakereportapp.context.ContextGetter;
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
 import com.appinventor.android.earthquakereportapp.variables.Constants;
 
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.appinventor.android.earthquakereportapp.context.ContextGetter.*;
+import static com.appinventor.android.earthquakereportapp.util.ContextGetter.getAppContext;
 
 public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.EarthquakeHolder> {
 
@@ -31,7 +31,7 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
     public EarthquakeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Create a View and inflate the layout of earthquake_item
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.earthquake_item, parent, false);
+                    .inflate(R.layout.earthquake_item, parent, false);
         return new EarthquakeHolder(itemView);
     }
 
@@ -79,12 +79,53 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
         String formattedDate = formatDate(dateObject);
         // Format the time
         String formattedTime = formatTime(dateObject);
+        // Format both date and time
+        String formattedDateAndTime = formatDateAndTime(dateObject);
+
+        // Get the number of people who felt the current earthquake
+        String felt = currentEarthquakeProperty.getFelt();
+
+        // Get the tsunami alert of the current earthquake property
+        int tsunamiAlert = currentEarthquakeProperty.getTsunami();
+        String tsunamiAlertDescription = checkTsunamiAlert(tsunamiAlert);
+
+        // Get the url of the current earthquake property
+        String url = currentEarthquakeProperty.getUrl();
+
+        // Get the longitude of the current earthquake property
+        Double longitude = currentEarthquakeProperty.getLongitude();
+
+        // Get the latitude of the current earthquake property
+        Double latitude = currentEarthquakeProperty.getLatitude();
+
+        String location = longitude.toString() + ", " + latitude.toString();
+
+        // Get the longitude of the current earthquake property
+        Double depth = currentEarthquakeProperty.getDepth();
+
+        String formattedDepth = depth.toString() + " m";
 
         holder.textViewMagnitude.setText(formattedMagnitude);
         holder.textViewLocationOffset.setText(locationOffset);
         holder.textViewPrimaryLocation.setText(primaryLocation);
         holder.textViewDate.setText(formattedDate);
         holder.textViewTime.setText(formattedTime);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent earthquakeDetailActivityIntent = new Intent(getAppContext(), EarthquakeDetailActivity.class);
+            earthquakeDetailActivityIntent.putExtra("date", formattedDateAndTime);
+            earthquakeDetailActivityIntent.putExtra("magnitude", magnitude);
+            earthquakeDetailActivityIntent.putExtra("formattedMagnitude", formattedMagnitude);
+            earthquakeDetailActivityIntent.putExtra("offset", locationOffset);
+            earthquakeDetailActivityIntent.putExtra("primary", primaryLocation);
+            earthquakeDetailActivityIntent.putExtra("felt", felt);
+            earthquakeDetailActivityIntent.putExtra("tsunami", tsunamiAlertDescription);
+            earthquakeDetailActivityIntent.putExtra("url", url);
+            earthquakeDetailActivityIntent.putExtra("location", location);
+            earthquakeDetailActivityIntent.putExtra("depth", formattedDepth);
+            earthquakeDetailActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getAppContext().startActivity(earthquakeDetailActivityIntent);
+        });
     }
 
     @Override
@@ -148,8 +189,11 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
             case 9:
                 magnitudeColorResourceId = R.color.magnitude9;
                 break;
-            default:
+            case 10:
                 magnitudeColorResourceId = R.color.magnitude10plus;
+                break;
+            default:
+                magnitudeColorResourceId = R.color.magnitude0Below;
                 break;
         }
         // Return the magnitudeColorResourceId
@@ -173,6 +217,23 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
         return timeFormat.format(dateObject);
     }
+
+    private String formatDateAndTime(Date dateObject) {
+        // Format the time to hours and minutes
+        SimpleDateFormat timeFormat = new SimpleDateFormat("LLL dd, yyyy h:mm a");
+        return timeFormat.format(dateObject);
+    }
+
+    private String checkTsunamiAlert(int tsunamiAlert) {
+        String tsunamiAlertDescription;
+        if(tsunamiAlert == 1) {
+            tsunamiAlertDescription = "Yes";
+        } else {
+            tsunamiAlertDescription = "No";
+        }
+        return tsunamiAlertDescription;
+    }
+
 
     public void clear() {
         int size = allEarthquakes.size();

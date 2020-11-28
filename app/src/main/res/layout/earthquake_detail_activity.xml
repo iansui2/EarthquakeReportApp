@@ -1,9 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.EarthquakeDetailActivity">
+    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <include
+                layout="@layout/toolbar_layout" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:textColor="@color/textColorEarthquakeDetails"
+                android:textSize="24sp"
+                android:text="Mar 6, 2010 8:00 PM" />
+
+            <TextView
+                android:id="@+id/magnitude"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_gravity="center"
+                android:background="@drawable/magnitude_square"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="48sp"
+                android:layout_marginBottom="16dp"
+                android:text="8.9" />
+
+            <TextView
+                android:id="@+id/location_offset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textAllCaps="true"
+                android:textColor="@color/textColorEarthquakeDetails"
+                android:textSize="24sp"
+                android:text="30km S of" />
+
+            <TextView
+                android:id="@+id/primary_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/textColorEarthquakeLocation"
+                android:textSize="24sp"
+                android:text="Philippines, Metro Manila" />
+
+            <TextView
+                android:id="@+id/number_felt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/felt_circle"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="60sp"
+                android:layout_marginBottom="16dp"
+                android:text="95" />
+
+            <TextView
+                android:id="@+id/people_felt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:textColor="@color/textColorEarthquakeLocation"
+                android:textSize="24sp"
+                android:textAllCaps="true"
+                android:text="@string/people_felt" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/pin_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_pin"/>
+
+                <TextView
+                    android:id="@+id/loc_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center"
+                    android:text="@string/location"
+                    android:textAllCaps="true"
+                    android:textColor="@color/textColorEarthquakeLocation"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/loc_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/textColorEarthquakeLocation"
+                    android:textSize="16sp"
+                    android:textAllCaps="true"
+                    android:text="127.65.56, 54.67.43"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/depth_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_depth"/>
+
+                <TextView
+                    android:id="@+id/depth_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center"
+                    android:text="@string/depth"
+                    android:textAllCaps="true"
+                    android:textColor="@color/textColorEarthquakeLocation"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/depth_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/textColorEarthquakeLocation"
+                    android:textSize="16sp"
+                    android:text="2.6 m"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/tsunami_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_tsunami"/>
+
+                <TextView
+                    android:id="@+id/tsunami_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center"
+                    android:text="@string/tsunami_alert"
+                    android:textAllCaps="true"
+                    android:textColor="@color/textColorEarthquakeLocation"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tsunami_alert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/textColorEarthquakeLocation"
+                    android:textSize="16sp"
+                    android:textAllCaps="true"
+                    android:text="Yes"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/view_more_button"
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:text="@string/view_more"
+                android:textColor="@android:color/white"
+                android:textAllCaps="true"
+                android:background="@android:color/holo_red_light"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+        </LinearLayout>
+</ScrollView>
+
+
+
