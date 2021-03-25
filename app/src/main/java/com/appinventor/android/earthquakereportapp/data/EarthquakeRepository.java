@@ -1,15 +1,17 @@
 package com.appinventor.android.earthquakereportapp.data;
 
+import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
+import com.appinventor.android.earthquakereportapp.converters.LongTypeConverter;
 import com.appinventor.android.earthquakereportapp.network.ApiInterface;
 import com.appinventor.android.earthquakereportapp.network.ConnectivityInterceptor;
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
+import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
 import com.appinventor.android.earthquakereportapp.variables.Constants;
 
 import org.json.JSONArray;
@@ -23,8 +25,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -37,17 +45,20 @@ import static com.appinventor.android.earthquakereportapp.network.ConnectivityUt
 
 public class EarthquakeRepository {
 
-    public static List<Earthquake> allEarthquakes = new ArrayList<>();
     public static ConnectivityInterceptor interceptor = new ConnectivityInterceptor();
     private Retrofit retrofit;
     private Call<ResponseBody> call;
     private Call<ResponseBody> retryCall;
     private Callback<ResponseBody> callback;
-    public static boolean internetSpeed = isConnectedFast();
     public static int seconds = 30;
-    public static boolean internetAccess;
 
-    final MutableLiveData<List<Earthquake>> earthquakeList = new MutableLiveData<>();
+    private static EarthquakeDatabase database;
+    private static LiveData<List<EarthquakeRoom>> allEarthquakeLiveData;
+
+    public EarthquakeRepository(Context context) {
+        database = EarthquakeDatabase.getInstance(context);
+        allEarthquakeLiveData = database.earthquakeDAO().getAllEarthquake();
+    }
 
     private static OkHttpClient okHttpClientBuilder() {
         // Building of OkHttpClient
@@ -60,11 +71,7 @@ public class EarthquakeRepository {
                 .build(); // Builds up OkHttpClient
     }
 
-    public LiveData<List<Earthquake>> callWebService() {
-            if (!internetSpeed) {
-                seconds += 30;
-            }
-
+    public void insertEarthquake() {
             // Building of Retrofit
             retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL_EARTHQUAKE)
@@ -76,8 +83,6 @@ public class EarthquakeRepository {
             ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
             // Creates a call of Response Body
-//            call = apiInterface.getEarthquakes(Constants.FORMAT_EARTHQUAKE, Constants.EVENT_TYPE, Global.startTime,
-////                    Global.endTime, Global.orderBy, Global.minMag, Global.maxMag);
             call = apiInterface.getEarthquakes();
 
             // Executing the call on a background thread
@@ -85,58 +90,69 @@ public class EarthquakeRepository {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if(response.isSuccessful()) {
-                        // Creates an InputStream
-                        InputStream inputStream = null;
-                        try {
-                            assert response.body() != null;
-                            // Assigning the byte stream body response into the InputStream
-                            inputStream = response.body().byteStream();
-                            // Creates a String jsonResponse and assigns it to the method readFromStream taking an input of inoutStream
-                            String jsonResponse = readFromStream(inputStream);
-                            // Assigning the list of earthquakes to the method parseJson taking an input of the String jsonResponse
-                            allEarthquakes = parseJson(jsonResponse);
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (inputStream != null) {
-                                try {
-                                    // Close the inputStream
-                                    inputStream.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                        if(response.isSuccessful()) {
+                            // Creates an InputStream
+                            InputStream inputStream = null;
+                            try {
+                                // Assigning the byte stream body response into the InputStream
+                                inputStream = response.body().byteStream();
+                                // Creates a String jsonResponse and assigns it to the method readFromStream taking an input of inoutStream
+                                String jsonResponse = readFromStream(inputStream);
+                                // Assigning the list of earthquakes to the method parseJson taking an input of the String jsonResponse
+                                List<Earthquake> allEarthquakeList = parseJson(jsonResponse);
+                                Completable.fromAction(() -> {
+                                    for(int i=0; i < allEarthquakeList.size(); i++) {
+                                        Double magnitude = allEarthquakeList.get(i).getMag();
+                                        String location = allEarthquakeList.get(i).getPlace();
+                                        Long time = allEarthquakeList.get(i).getTime();
+                                        String url = allEarthquakeList.get(i).getUrl();
+                                        String felt = allEarthquakeList.get(i).getFelt();
+                                        int tsunami = allEarthquakeList.get(i).getTsunami();
+                                        Double longitude = allEarthquakeList.get(i).getLongitude();
+                                        Double latitude = allEarthquakeList.get(i).getLatitude();
+                                        Double depth = allEarthquakeList.get(i).getDepth();
+
+                                        EarthquakeRoom earthquakeRoom = new EarthquakeRoom(magnitude, location, time,
+                                                url, felt, tsunami, longitude, latitude, depth);
+                                        database.earthquakeDAO().insertEarthquake(earthquakeRoom);
+                                    }
+                                }).subscribeOn(Schedulers.io())
+                                .subscribe();
+                            } catch (IOException | JSONException e) {
+                                e.printStackTrace();
+                            } finally {
+                                if (inputStream != null) {
+                                    try {
+                                        // Close the inputStream
+                                        inputStream.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
+                            Log.e("EarthquakeRepository", response.code() + ": Success of loading the earthquakes");
+                            // Clone the call and assign it to a variable
+                            retryCall = call.clone();
+                            // Set the callback to this call using this function
+                            setCallback(this);
+                        } else {
+                            Log.e("EarthquakeRepository", response.code() + ": Failure of loading the earthquakes");
                         }
-                        Log.e("EarthquakeRepository", response.code() + ": Success of loading the earthquakes");
-                        // Post the value of the list to the LiveData
-                        earthquakeList.postValue(allEarthquakes);
-                        internetAccess = true;
-                        // Set the callback to this call using this function
-                        setCallback(this);
-                        // Clone the call and assign it to a variable
-                        retryCall = call.clone();
-                    } else {
-                        Log.e("EarthquakeRepository", response.code() + ": Failure of loading the earthquakes");
-                        // Post the value of the list to the LiveData
-                        earthquakeList.postValue(allEarthquakes);
-                        internetAccess = true;
                     }
-                }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.e("EarthquakeRepository", "onFailure: Failure of loading the earthquakes");
-                    // Post the value of the list to the LiveData
-                    earthquakeList.postValue(allEarthquakes);
-                    internetAccess = false;
-                    // Set the callback to this call using this function
-                    setCallback(this);
                     // Clone the call and assign it to a variable
                     retryCall = call.clone();
+                    // Set the callback to this call using this function
+                    setCallback(this);
                 }
             });
-       return earthquakeList;
+    }
+
+    public LiveData<List<EarthquakeRoom>> getAllEarthquake() {
+        return allEarthquakeLiveData;
     }
 
     private void setCallback(Callback<ResponseBody> responseBodyCallback) {
@@ -190,7 +206,7 @@ public class EarthquakeRepository {
                 // Assigning the values of the properties based on the name of the key of the JSONObject
                 Double magnitude = properties.getDouble("mag");
                 String location = properties.getString("place");
-                Long time = properties.getLong("time");
+                long time = properties.getLong("time");
                 String url = properties.getString("url");
                 String felt = properties.getString("felt");
                 int tsunami = properties.getInt("tsunami");

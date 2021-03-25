@@ -5,13 +5,10 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -27,9 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.appinventor.android.earthquakereportapp.R;
-import com.appinventor.android.earthquakereportapp.data.EarthquakeRepository;
-import com.appinventor.android.earthquakereportapp.data.EarthquakeViewModel;
-import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
+import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
+import com.appinventor.android.earthquakereportapp.viewmodels.EarthquakeViewModel;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
@@ -39,7 +35,7 @@ import static com.appinventor.android.earthquakereportapp.network.ConnectivityUt
 
 public class EarthquakeActivity extends AppCompatActivity {
 
-    private ProgressBar mainProgressBar;
+    private ProgressBar progressBar;
     private DrawerLayout drawerLayout;
 
     private LinearLayoutManager linearLayoutManager;
@@ -55,7 +51,8 @@ public class EarthquakeActivity extends AppCompatActivity {
     private boolean isLoading = false;
     private boolean isRefreshing = false;
 
-    private Dialog alertDialog;
+    private Dialog alertCheckConnectionDialog;
+    private Dialog alertSavedDataDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,16 +93,25 @@ public class EarthquakeActivity extends AppCompatActivity {
             }
         });
 
-        mainProgressBar = findViewById(R.id.main_loading_indicator);
+        progressBar = findViewById(R.id.loading_indicator);
 
         final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setVisibility(View.INVISIBLE);
 
-        alertDialog = new Dialog(EarthquakeActivity.this);
-        alertDialog.setContentView(R.layout.custom_dialog);
-        Objects.requireNonNull(alertDialog.getWindow()).setLayout(1000, 1000);
+        alertCheckConnectionDialog = new Dialog(EarthquakeActivity.this);
+        alertCheckConnectionDialog.setContentView(R.layout.check_connection_dialog);
+        alertCheckConnectionDialog.setCancelable(false);
+        alertCheckConnectionDialog.setCanceledOnTouchOutside(false);
+        Objects.requireNonNull(alertCheckConnectionDialog.getWindow()).setLayout(1000, 1250);
 
-        final Button tryAgainButton = alertDialog.findViewById(R.id.try_again_button);
+        alertSavedDataDialog = new Dialog(EarthquakeActivity.this);
+        alertSavedDataDialog.setContentView(R.layout.saved_data_dialog);
+        alertSavedDataDialog.setCancelable(false);
+        alertSavedDataDialog.setCanceledOnTouchOutside(false);
+        Objects.requireNonNull(alertSavedDataDialog.getWindow()).setLayout(1000, 1250);
+
+        final Button okCheckConnectionButton = alertCheckConnectionDialog.findViewById(R.id.ok_button);
+        final Button okSavedDataButton = alertSavedDataDialog.findViewById(R.id.ok_button);
 
         linearLayoutManager = new LinearLayoutManager(this);
 
@@ -155,24 +161,25 @@ public class EarthquakeActivity extends AppCompatActivity {
         final EarthquakeViewModel earthquakeViewModel = new ViewModelProvider(this).get(EarthquakeViewModel.class);
 
         // Get the method from the EarthquakeViewModel and call the method observe
-        earthquakeViewModel.getEarthquakeListObservableData().observe(this, new Observer<List<Earthquake>>() {
+        earthquakeViewModel.getEarthquakeListObservableData().observe(this, new Observer<List<EarthquakeRoom>>() {
             @Override
-            public void onChanged(final List<Earthquake> earthquakes) {
+            public void onChanged(final List<EarthquakeRoom> earthquake) {
                 // Set the LiveData for the RecyclerView
-                setupList(earthquakes);
-                // Call the tryAgain function when the button is clicked
-                tryAgainButton.setOnClickListener(v -> {
-                    tryAgain(earthquakes);
-                    alertDialog.cancel();
+                setupList(earthquake);
+                okCheckConnectionButton.setOnClickListener(v -> {
+                    alertCheckConnectionDialog.cancel();
+                });
+                okSavedDataButton.setOnClickListener(v -> {
+                    alertSavedDataDialog.cancel();
                 });
                 swipeRefreshLayout.setOnRefreshListener(() -> {
                     swipeRefreshLayout.setRefreshing(true);
-                    refresh(earthquakes);
+                    refresh();
                     isRefreshing = true;
                 });
             }
 
-            public void setupList(List<Earthquake> earthquakes) {
+            public void setupList(List<EarthquakeRoom> earthquakes) {
                 // Get the current time in milliseconds and add it to the time left in milliseconds
                 // and assign it to a variable
                 mEndTime = System.currentTimeMillis() + mTimeLeftInMillis;
@@ -181,54 +188,56 @@ public class EarthquakeActivity extends AppCompatActivity {
                     public void onTick(long millisUntilFinished) {
                         // Assign the parameter millisUntilFinished to the variable mTimeLeftInMillis
                         mTimeLeftInMillis = millisUntilFinished;
-                        // Make the progress bar visible
-                        if(!isRefreshing) {
-                            showMainProgressBar(true);
-                        } else {
-                            showMainProgressBar(false);
-                        }
                     }
 
                     public void onFinish() {
+                        // Make the progress bar invisible
+                        showProgressBar(false);
                         // Assign the value false to the variable mTimerRunning
                         mTimerRunning = false;
-                            if (networkAvailable()) {
-                                // Make the progress bar invisible
-                                showMainProgressBar(false);
+                        swipeRefreshLayout.setRefreshing(false);
+
+                        if (networkAvailable()) {
+                            if (earthquakes != null && !earthquakes.isEmpty()) {
                                 swipeRefreshLayout.setVisibility(View.VISIBLE);
-                                swipeRefreshLayout.setRefreshing(false);
                                 // Clear the adapter
                                 adapter.clear();
-
-                                if (earthquakes != null && !earthquakes.isEmpty()) {
-                                    // Add the data to the RecyclerView
-                                    adapter.setAllEarthquakes(earthquakes);
-                                } else {
-                                    Log.e("EarthquakeActivity", "Adapter is null and empty");
-                                }
-
-                            } else {
-                                // Make the progress bar invisible
-                                showMainProgressBar(false);
-                                swipeRefreshLayout.setRefreshing(false);
-                                swipeRefreshLayout.setVisibility(View.INVISIBLE);
-                                alertDialog.show();
+                                // Add the data to the RecyclerView
+                                adapter.setAllEarthquakes(earthquakes);
                             }
+                        } else {
+                            if (earthquakes != null && !earthquakes.isEmpty()) {
+                                swipeRefreshLayout.setVisibility(View.VISIBLE);
+                                // Clear the adapter
+                                adapter.clear();
+                                // Add the data to the RecyclerView
+                                adapter.setAllEarthquakes(earthquakes);
+
+
+                                if (!networkAvailable()) {
+                                    alertSavedDataDialog.show();
+                                }
+                            } else {
+                                alertCheckConnectionDialog.show();
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        }
                     }
                 }.start();
                 // Assign the value true to the variable mTimerRunning
                 mTimerRunning = true;
             }
 
-            public void tryAgain(List<Earthquake> earthquakes) {
+            public void refresh() {
                 earthquakeViewModel.retryCall();
-                showMainProgressBar(true);
-            }
 
-            public void refresh(List<Earthquake> earthquakes) {
-                earthquakeViewModel.retryCall();
+                if (!networkAvailable()) {
+                    alertCheckConnectionDialog.show();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
+        earthquakeViewModel.callEarthquakeObservableInRepository();
     }
 
     @Override
@@ -264,7 +273,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         }
     }
 
-    private void showMainProgressBar(boolean visibility) {
-        mainProgressBar.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
+    private void showProgressBar(boolean visibility) {
+        progressBar.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
     }
 }

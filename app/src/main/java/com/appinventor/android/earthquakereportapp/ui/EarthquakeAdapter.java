@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.appinventor.android.earthquakereportapp.R;
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
+import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
 import com.appinventor.android.earthquakereportapp.variables.Constants;
 
 import java.text.DecimalFormat;
@@ -25,8 +26,9 @@ import static com.appinventor.android.earthquakereportapp.util.ContextGetter.get
 
 public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.EarthquakeHolder> {
 
-    private List<Earthquake> allEarthquakes = new ArrayList<>();
+    private List<EarthquakeRoom> allEarthquakes = new ArrayList<>();
 
+    @NonNull
     @Override
     public EarthquakeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Create a View and inflate the layout of earthquake_item
@@ -38,7 +40,7 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
     @Override
     public void onBindViewHolder(@NonNull EarthquakeHolder holder, int position) {
         // Get the current earthquake property
-        Earthquake currentEarthquakeProperty = allEarthquakes.get(position);
+        EarthquakeRoom currentEarthquakeProperty = allEarthquakes.get(position);
 
         String primaryLocation;
         String locationOffset;
@@ -73,8 +75,10 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
             primaryLocation = originalLocation;
         }
 
+        // Get the date and time of the current earthquake property
+        long time = currentEarthquakeProperty.getTime();
         // Create a date object
-        Date dateObject = new Date(currentEarthquakeProperty.getTime());
+        Date dateObject = new Date(time);
         // Format the date
         String formattedDate = formatDate(dateObject);
         // Format the time
@@ -94,16 +98,18 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
 
         // Get the longitude of the current earthquake property
         Double longitude = currentEarthquakeProperty.getLongitude();
+        String formattedLongitude = formatLongitudeAndLatitude(longitude);
 
         // Get the latitude of the current earthquake property
         Double latitude = currentEarthquakeProperty.getLatitude();
+        String formattedLatitude = formatLongitudeAndLatitude(latitude);
 
-        String location = longitude.toString() + ", " + latitude.toString();
+        String location = formattedLongitude + ", " + formattedLatitude;
 
-        // Get the longitude of the current earthquake property
+        // Get the depth of the current earthquake property
         Double depth = currentEarthquakeProperty.getDepth();
 
-        String formattedDepth = depth.toString() + " m";
+        String formattedDepth = depth + " m";
 
         holder.textViewMagnitude.setText(formattedMagnitude);
         holder.textViewLocationOffset.setText(locationOffset);
@@ -133,7 +139,7 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
         return allEarthquakes.size();
     }
 
-    public void setAllEarthquakes(List<Earthquake> allEarthquakes) {
+    public void setAllEarthquakes(List<EarthquakeRoom> allEarthquakes) {
         this.allEarthquakes = allEarthquakes;
         // Notify the RecyclerView that the data set has changed.
         notifyDataSetChanged();
@@ -204,6 +210,12 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
         // Format the magnitude to one decimal place
         DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
         return magnitudeFormat.format(magnitude);
+    }
+
+    private String formatLongitudeAndLatitude(double longitudeAndLatitude) {
+        // Format the magnitude to one decimal place
+        DecimalFormat magnitudeFormat = new DecimalFormat("0.000");
+        return magnitudeFormat.format(longitudeAndLatitude);
     }
 
     private String formatDate(Date dateObject) {

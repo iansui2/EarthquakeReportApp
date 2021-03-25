@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/no_internet"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_no_internet" />
+
+        <TextView
+            android:id="@+id/empty_view_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:paddingBottom="16dp"
+            android:layout_gravity="center"
+            android:text="@string/no_internet_connection"/>
+
+        <TextView
+            android:id="@+id/empty_view_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:paddingBottom="16dp"
+            android:layout_gravity="center"
+            android:text="@string/check_internet_connection"/>
+
+        <ImageView
+            android:id="@+id/swipe_refresh"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_refresh" />
+
+        <TextView
+            android:id="@+id/swipe_refresh_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:paddingBottom="16dp"
+            android:layout_gravity="center"
+            android:text="@string/swipe_refresh"/>
+
+        <Button
+            android:id="@+id/ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/ok"
+            android:textAllCaps="true"
+            android:textAppearance="?android:textAppearanceMedium"/>
+
+</LinearLayout>

@@ -5,10 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class Earthquake {
 
-    @SerializedName("id")
-    @Expose
-    public String mId;
-
     @SerializedName("mag")
     @Expose
     private Double mMag;

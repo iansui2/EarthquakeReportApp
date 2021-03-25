@@ -24,8 +24,17 @@
     <!-- Default text for failure of loading the earthquakes -->
     <string name="failure">Failure of loading the earthquakes</string>
 
-    <!-- Default text for try again -->
-    <string name="try_again">Try Again</string>
+    <!-- Default text for ok -->
+    <string name="ok">Ok</string>
+
+    <!-- Default text for cancel -->
+    <string name="cancel">Cancel</string>
+
+    <!-- Default text for swipe down to refresh your connection -->
+    <string name="swipe_refresh">Swipe down to refresh your connection</string>
+
+    <!-- Default text for failure of loading the earthquakes -->
+    <string name="saved_data">This data came from the database</string>
 
     <!-- Default text for people felt it -->
     <string name="people_felt">People Felt It</string>

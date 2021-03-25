@@ -2,16 +2,14 @@ package com.appinventor.android.earthquakereportapp.data;
 
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeTrivia;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EarthquakeTriviaDataSource {
 
-    public static List<EarthquakeTrivia> earthquakeTriviaList;
+    public List <EarthquakeTrivia> earthquakeTriviaList;
 
-    public static List<EarthquakeTrivia> getTriviaFromWikipedia() {
-        earthquakeTriviaList.add(new EarthquakeTrivia("Earthquake",
-                " (also known as a quake, tremor or temblor) is the shaking of the surface of the Earth resulting " +
-                        "from a sudden release of energy in the Earth's lithosphere that creates seismic waves."));
+    public List<EarthquakeTrivia> getTriviaFromWikipedia() {
         earthquakeTriviaList.add(new EarthquakeTrivia("Seismicity",
                 "or seismic activity, of an area is the frequency, type, and size of earthquakes experienced over " +
                         "a period of time."));

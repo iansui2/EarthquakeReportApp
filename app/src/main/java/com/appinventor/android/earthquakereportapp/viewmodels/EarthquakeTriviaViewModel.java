@@ -1,4 +1,4 @@
-package com.appinventor.android.earthquakereportapp.data;
+package com.appinventor.android.earthquakereportapp.viewmodels;
 
 import android.app.Application;
 
@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.appinventor.android.earthquakereportapp.data.EarthquakeTriviaRepository;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeTrivia;
 
 import java.util.List;

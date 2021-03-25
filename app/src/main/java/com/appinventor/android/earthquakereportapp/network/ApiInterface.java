@@ -3,6 +3,7 @@ package com.appinventor.android.earthquakereportapp.network;
 import com.appinventor.android.earthquakereportapp.ui.EarthquakeAdapter;
 import com.appinventor.android.earthquakereportapp.variables.Global;
 
+import io.reactivex.Completable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;

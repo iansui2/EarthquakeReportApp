@@ -8,33 +8,20 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.appinventor.android.earthquakereportapp.R;
 import com.appinventor.android.earthquakereportapp.data.EarthquakeTriviaRepository;
-import com.appinventor.android.earthquakereportapp.data.EarthquakeTriviaViewModel;
-import com.appinventor.android.earthquakereportapp.data.EarthquakeViewModel;
+import com.appinventor.android.earthquakereportapp.viewmodels.EarthquakeTriviaViewModel;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeTrivia;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
-import java.util.Objects;
-
-import static com.appinventor.android.earthquakereportapp.network.ConnectivityUtil.networkAvailable;
 
 public class EarthquakeTriviaActivity extends AppCompatActivity {
 
