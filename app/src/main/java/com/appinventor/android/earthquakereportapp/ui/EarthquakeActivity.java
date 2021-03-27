@@ -26,6 +26,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.appinventor.android.earthquakereportapp.R;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
 import com.appinventor.android.earthquakereportapp.viewmodels.EarthquakeViewModel;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
@@ -49,10 +50,6 @@ public class EarthquakeActivity extends AppCompatActivity {
     private long mEndTime;
 
     private boolean isLoading = false;
-    private boolean isRefreshing = false;
-
-    private Dialog alertCheckConnectionDialog;
-    private Dialog alertSavedDataDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,21 +94,21 @@ public class EarthquakeActivity extends AppCompatActivity {
 
         final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setVisibility(View.INVISIBLE);
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.red));
 
-        alertCheckConnectionDialog = new Dialog(EarthquakeActivity.this);
-        alertCheckConnectionDialog.setContentView(R.layout.check_connection_dialog);
-        alertCheckConnectionDialog.setCancelable(false);
-        alertCheckConnectionDialog.setCanceledOnTouchOutside(false);
-        Objects.requireNonNull(alertCheckConnectionDialog.getWindow()).setLayout(1000, 1250);
+        MaterialAlertDialogBuilder alertCheckConnectionDialog = new MaterialAlertDialogBuilder(this);
+        alertCheckConnectionDialog.setTitle(R.string.no_internet_connection)
+                                    .setMessage(R.string.swipe_refresh)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.ok, (dialog, which) -> dialog.cancel())
+                                    .create();
 
-        alertSavedDataDialog = new Dialog(EarthquakeActivity.this);
-        alertSavedDataDialog.setContentView(R.layout.saved_data_dialog);
-        alertSavedDataDialog.setCancelable(false);
-        alertSavedDataDialog.setCanceledOnTouchOutside(false);
-        Objects.requireNonNull(alertSavedDataDialog.getWindow()).setLayout(1000, 1250);
-
-        final Button okCheckConnectionButton = alertCheckConnectionDialog.findViewById(R.id.ok_button);
-        final Button okSavedDataButton = alertSavedDataDialog.findViewById(R.id.ok_button);
+        MaterialAlertDialogBuilder alertSavedDataDialog = new MaterialAlertDialogBuilder(this);
+        alertSavedDataDialog.setTitle(R.string.no_internet_connection)
+                            .setMessage(R.string.saved_data)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, (dialog, which) -> dialog.cancel())
+                            .create();
 
         linearLayoutManager = new LinearLayoutManager(this);
 
@@ -166,16 +163,9 @@ public class EarthquakeActivity extends AppCompatActivity {
             public void onChanged(final List<EarthquakeRoom> earthquake) {
                 // Set the LiveData for the RecyclerView
                 setupList(earthquake);
-                okCheckConnectionButton.setOnClickListener(v -> {
-                    alertCheckConnectionDialog.cancel();
-                });
-                okSavedDataButton.setOnClickListener(v -> {
-                    alertSavedDataDialog.cancel();
-                });
                 swipeRefreshLayout.setOnRefreshListener(() -> {
                     swipeRefreshLayout.setRefreshing(true);
                     refresh();
-                    isRefreshing = true;
                 });
             }
 
