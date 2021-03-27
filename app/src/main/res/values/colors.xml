@@ -7,14 +7,23 @@
     <!-- Text color for the primary location of the properties in the list item -->
     <color name="textColorEarthquakeLocation">#2B3D4D</color>
 
-    <!-- Primary color of the app (shown in the app bar) -->
-    <color name="colorPrimary">#F0514B</color>
+    <!-- Primary color of the app -->
+    <color name="red">#F0514B</color>
 
-    <!-- Primary dark color of the app (shown in the status bar) -->
-    <color name="colorPrimaryDark">#C0403C</color>
+    <!-- Primary color variant of the app -->
+    <color name="red_dark">#C0403C</color>
 
-    <!-- Accent color of the app -->
-    <color name="colorAccent">#F0514B</color>
+    <!-- On Primary color of the app -->
+    <color name="red_light">#F0514B</color>
+
+    <!-- Secondary color of the app -->
+    <color name="orange">#FFA500</color>
+
+    <!-- Secondary color variant of the app -->
+    <color name="orange_dark">#FF8C00</color>
+
+    <!-- On Secondary color of the app -->
+    <color name="orange_light">#FED8b1</color>
 
     <!-- Color for an properties with magnitude below 0-->
     <color name="magnitude0Below">#4A61A7</color>
