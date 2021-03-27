@@ -17,7 +17,7 @@
             android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:swipeRefreshLayoutProgressSpinnerBackgroundColor="@color/colorPrimary"
+            app:swipeRefreshLayoutProgressSpinnerBackgroundColor="@color/red"
             android:layout_marginTop="?attr/actionBarSize">
 
             <androidx.recyclerview.widget.RecyclerView
