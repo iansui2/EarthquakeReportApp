@@ -99,23 +99,23 @@ public class EarthquakeActivity extends AppCompatActivity {
 
         MaterialAlertDialogBuilder alertCheckConnectionDialog = new MaterialAlertDialogBuilder(this);
         alertCheckConnectionDialog.setTitle(R.string.no_internet_connection)
-                                    .setMessage(R.string.swipe_refresh)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, (dialog, which) -> dialog.cancel())
-                                    .create();
+                .setMessage(R.string.swipe_refresh)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> dialog.cancel())
+                .create();
 
         MaterialAlertDialogBuilder alertCheckConnectionFirstTimeDialog = new MaterialAlertDialogBuilder(this);
         alertCheckConnectionFirstTimeDialog.setTitle(R.string.no_internet_connection)
-                                            .setMessage(R.string.click_ok)
-                                            .setCancelable(false)
-                                            .create();
+                .setMessage(R.string.click_ok)
+                .setCancelable(false)
+                .create();
 
         MaterialAlertDialogBuilder alertSavedDataDialog = new MaterialAlertDialogBuilder(this);
         alertSavedDataDialog.setTitle(R.string.no_internet_connection)
-                            .setMessage(R.string.saved_data)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.ok, (dialog, which) -> dialog.cancel())
-                            .create();
+                .setMessage(R.string.saved_data)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> dialog.cancel())
+                .create();
 
         linearLayoutManager = new LinearLayoutManager(this);
 
@@ -220,6 +220,11 @@ public class EarthquakeActivity extends AppCompatActivity {
 
                                     dialog.cancel();
                                     showProgressBar(true);
+
+                                    if (!networkAvailable()) {
+                                        alertCheckConnectionFirstTimeDialog.show();
+                                        swipeRefreshLayout.setRefreshing(false);
+                                    }
                                 });
                                 alertCheckConnectionFirstTimeDialog.show();
                                 swipeRefreshLayout.setRefreshing(false);
