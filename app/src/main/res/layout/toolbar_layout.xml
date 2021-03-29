@@ -5,5 +5,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolBar"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-    android:background="@color/red"
+    android:background="@color/primary_red"
     app:titleTextColor="@android:color/white" />

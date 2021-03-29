@@ -2,13 +2,13 @@
     <!-- Base application theme. -->
         <style name="Theme.EarthquakeReport" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/red</item>
-        <item name="colorPrimaryVariant">@color/red_dark</item>
-        <item name="colorOnPrimary">@color/red_light</item>
+        <item name="colorPrimary">@color/primary_red</item>
+        <item name="colorPrimaryVariant">@color/primary_red_dark</item>
+        <item name="colorOnPrimary">@color/primary_red_light</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/orange</item>
-        <item name="colorSecondaryVariant">@color/orange_dark</item>
-        <item name="colorOnSecondary">@color/orange_light</item>
+        <item name="colorSecondary">@color/secondary_red</item>
+        <item name="colorSecondaryVariant">@color/secondary_red_dark</item>
+        <item name="colorOnSecondary">@color/secondary_red_light</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

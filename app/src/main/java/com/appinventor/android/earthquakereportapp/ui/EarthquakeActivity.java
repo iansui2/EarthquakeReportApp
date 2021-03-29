@@ -1,6 +1,7 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -94,7 +95,7 @@ public class EarthquakeActivity extends AppCompatActivity {
 
         final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setVisibility(View.INVISIBLE);
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.red));
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary_red));
 
         MaterialAlertDialogBuilder alertCheckConnectionDialog = new MaterialAlertDialogBuilder(this);
         alertCheckConnectionDialog.setTitle(R.string.no_internet_connection)
@@ -102,6 +103,12 @@ public class EarthquakeActivity extends AppCompatActivity {
                                     .setCancelable(false)
                                     .setPositiveButton(R.string.ok, (dialog, which) -> dialog.cancel())
                                     .create();
+
+        MaterialAlertDialogBuilder alertCheckConnectionFirstTimeDialog = new MaterialAlertDialogBuilder(this);
+        alertCheckConnectionFirstTimeDialog.setTitle(R.string.no_internet_connection)
+                                            .setMessage(R.string.click_ok)
+                                            .setCancelable(false)
+                                            .create();
 
         MaterialAlertDialogBuilder alertSavedDataDialog = new MaterialAlertDialogBuilder(this);
         alertSavedDataDialog.setTitle(R.string.no_internet_connection)
@@ -208,7 +215,13 @@ public class EarthquakeActivity extends AppCompatActivity {
                                     alertSavedDataDialog.show();
                                 }
                             } else {
-                                alertCheckConnectionDialog.show();
+                                alertCheckConnectionFirstTimeDialog.setPositiveButton(R.string.ok, (dialog, which) -> {
+                                    earthquakeViewModel.retryCall();
+
+                                    dialog.cancel();
+                                    showProgressBar(true);
+                                });
+                                alertCheckConnectionFirstTimeDialog.show();
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         }

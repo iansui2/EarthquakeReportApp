@@ -30,6 +30,9 @@
     <!-- Default text for cancel -->
     <string name="cancel">Cancel</string>
 
+    <!-- Default text for click ok to try again -->
+    <string name="click_ok">Click OK to try again</string>
+
     <!-- Default text for swipe down to refresh your connection -->
     <string name="swipe_refresh">Swipe down to refresh your connection</string>
 

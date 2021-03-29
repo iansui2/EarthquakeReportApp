@@ -8,22 +8,22 @@
     <color name="textColorEarthquakeLocation">#2B3D4D</color>
 
     <!-- Primary color of the app -->
-    <color name="red">#F0514B</color>
+    <color name="primary_red">#F44336</color>
 
     <!-- Primary color variant of the app -->
-    <color name="red_dark">#C0403C</color>
+    <color name="primary_red_dark">#BA000D</color>
 
     <!-- On Primary color of the app -->
-    <color name="red_light">#F0514B</color>
+    <color name="primary_red_light">#FF7961</color>
 
     <!-- Secondary color of the app -->
-    <color name="orange">#FFA500</color>
+    <color name="secondary_red">#D50000</color>
 
     <!-- Secondary color variant of the app -->
-    <color name="orange_dark">#FF8C00</color>
+    <color name="secondary_red_dark">#9B0000</color>
 
     <!-- On Secondary color of the app -->
-    <color name="orange_light">#FED8b1</color>
+    <color name="secondary_red_light">#FF5131</color>
 
     <!-- Color for an properties with magnitude below 0-->
     <color name="magnitude0Below">#4A61A7</color>
