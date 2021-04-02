@@ -1,15 +1,14 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -25,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.appinventor.android.earthquakereportapp.R;
+import com.appinventor.android.earthquakereportapp.network.AppExecutors;
+import com.appinventor.android.earthquakereportapp.network.ConnectivityUtil;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
 import com.appinventor.android.earthquakereportapp.viewmodels.EarthquakeViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -33,7 +34,12 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 import static com.appinventor.android.earthquakereportapp.network.ConnectivityUtil.*;
+import static com.appinventor.android.earthquakereportapp.variables.Constants.LOG_TAG;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
@@ -52,10 +58,14 @@ public class EarthquakeActivity extends AppCompatActivity {
 
     private boolean isLoading = false;
 
+    private ConnectivityUtil networkConnectivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
+
+        networkConnectivity = new ConnectivityUtil(AppExecutors.getInstance(), this);
 
         Toolbar toolBar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolBar);
@@ -188,48 +198,55 @@ public class EarthquakeActivity extends AppCompatActivity {
                     }
 
                     public void onFinish() {
-                        // Make the progress bar invisible
-                        showProgressBar(false);
-                        // Assign the value false to the variable mTimerRunning
-                        mTimerRunning = false;
-                        swipeRefreshLayout.setRefreshing(false);
+                        networkConnectivity.checkInternetConnection((isConnected -> {
+                            // Make the progress bar invisible
+                            showProgressBar(false);
+                            // Assign the value false to the variable mTimerRunning
+                            mTimerRunning = false;
+                            swipeRefreshLayout.setRefreshing(false);
 
-                        if (networkAvailable()) {
-                            if (earthquakes != null && !earthquakes.isEmpty()) {
-                                swipeRefreshLayout.setVisibility(View.VISIBLE);
-                                // Clear the adapter
-                                adapter.clear();
-                                // Add the data to the RecyclerView
-                                adapter.setAllEarthquakes(earthquakes);
-                            }
-                        } else {
-                            if (earthquakes != null && !earthquakes.isEmpty()) {
-                                swipeRefreshLayout.setVisibility(View.VISIBLE);
-                                // Clear the adapter
-                                adapter.clear();
-                                // Add the data to the RecyclerView
-                                adapter.setAllEarthquakes(earthquakes);
-
-
-                                if (!networkAvailable()) {
-                                    alertSavedDataDialog.show();
+                            if (isConnected) {
+                                if (earthquakes != null && !earthquakes.isEmpty()) {
+                                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                                    // Clear the adapter
+                                    adapter.clear();
+                                    // Add the data to the RecyclerView
+                                    adapter.setAllEarthquakes(earthquakes);
                                 }
                             } else {
-                                alertCheckConnectionFirstTimeDialog.setPositiveButton(R.string.ok, (dialog, which) -> {
-                                    earthquakeViewModel.retryCall();
+                                if (earthquakes != null && !earthquakes.isEmpty()) {
+                                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                                    // Clear the adapter
+                                    adapter.clear();
+                                    // Add the data to the RecyclerView
+                                    adapter.setAllEarthquakes(earthquakes);
 
-                                    dialog.cancel();
-                                    showProgressBar(true);
 
-                                    if (!networkAvailable()) {
-                                        alertCheckConnectionFirstTimeDialog.show();
-                                        swipeRefreshLayout.setRefreshing(false);
-                                    }
-                                });
-                                alertCheckConnectionFirstTimeDialog.show();
-                                swipeRefreshLayout.setRefreshing(false);
+                                    networkConnectivity.checkInternetConnection(isConnected1 -> {
+                                        if (!isConnected1) {
+                                            alertSavedDataDialog.show();
+                                        }
+                                    });
+
+                                } else {
+                                    alertCheckConnectionFirstTimeDialog.setPositiveButton(R.string.ok, (dialog, which) -> {
+                                        earthquakeViewModel.retryCall();
+
+                                        dialog.cancel();
+                                        showProgressBar(true);
+
+                                        networkConnectivity.checkInternetConnection(isConnected2 -> {
+                                            if (!isConnected2) {
+                                                alertCheckConnectionFirstTimeDialog.show();
+                                                swipeRefreshLayout.setRefreshing(false);
+                                            }
+                                        });
+                                    });
+                                    alertCheckConnectionFirstTimeDialog.show();
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
                             }
-                        }
+                        }));
                     }
                 }.start();
                 // Assign the value true to the variable mTimerRunning
@@ -239,10 +256,12 @@ public class EarthquakeActivity extends AppCompatActivity {
             public void refresh() {
                 earthquakeViewModel.retryCall();
 
-                if (!networkAvailable()) {
-                    alertCheckConnectionDialog.show();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+                networkConnectivity.checkInternetConnection(isConnected3 -> {
+                    if (!isConnected3) {
+                        alertCheckConnectionDialog.show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
             }
         });
         earthquakeViewModel.callEarthquakeObservableInRepository();

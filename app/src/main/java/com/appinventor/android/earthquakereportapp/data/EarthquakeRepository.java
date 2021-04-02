@@ -42,12 +42,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.appinventor.android.earthquakereportapp.network.ConnectivityUtil.*;
+import static com.appinventor.android.earthquakereportapp.variables.Constants.LOG_TAG;
 
 public class EarthquakeRepository {
 
     public static ConnectivityInterceptor interceptor = new ConnectivityInterceptor();
-    private Retrofit retrofit;
-    private Call<ResponseBody> call;
     private Call<ResponseBody> retryCall;
     private Callback<ResponseBody> callback;
     public static int seconds = 30;
@@ -73,7 +72,7 @@ public class EarthquakeRepository {
 
     public void insertEarthquake() {
             // Building of Retrofit
-            retrofit = new Retrofit.Builder()
+            Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL_EARTHQUAKE)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClientBuilder())
@@ -83,7 +82,7 @@ public class EarthquakeRepository {
             ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
             // Creates a call of Response Body
-            call = apiInterface.getEarthquakes();
+            Call<ResponseBody> call = apiInterface.getEarthquakes();
 
             // Executing the call on a background thread
             call.enqueue(new Callback<ResponseBody>() {
@@ -130,19 +129,21 @@ public class EarthquakeRepository {
                                     }
                                 }
                             }
-                            Log.e("EarthquakeRepository", response.code() + ": Success of loading the earthquakes");
+                            Log.i(LOG_TAG, response.code() + ": Success of loading the earthquakes");
                             // Clone the call and assign it to a variable
-                            retryCall = call.clone();
                             // Set the callback to this call using this function
-                            setCallback(this);
                         } else {
-                            Log.e("EarthquakeRepository", response.code() + ": Failure of loading the earthquakes");
+                            Log.e(LOG_TAG, response.code() + ": Failure of loading the earthquakes");
+                            // Clone the call and assign it to a variable
+                            // Set the callback to this call using this function
                         }
-                    }
+                    retryCall = call.clone();
+                    setCallback(this);
+                }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("EarthquakeRepository", "onFailure: Failure of loading the earthquakes");
+                    Log.e(LOG_TAG, "onFailure: Failure of loading the earthquakes");
                     // Clone the call and assign it to a variable
                     retryCall = call.clone();
                     // Set the callback to this call using this function

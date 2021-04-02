@@ -1,5 +1,6 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -12,7 +13,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appinventor.android.earthquakereportapp.R;
-import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
 import com.appinventor.android.earthquakereportapp.variables.Constants;
 
