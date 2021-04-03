@@ -1,6 +1,7 @@
 package com.appinventor.android.earthquakereportapp.data;
 
 import android.content.Context;
+
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -11,7 +12,7 @@ import com.appinventor.android.earthquakereportapp.converters.LongTypeConverter;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeTrivia;
 
-@Database(entities = {EarthquakeRoom.class, EarthquakeTrivia.class}, version = 2, exportSchema = false)
+@Database(entities = {EarthquakeRoom.class, EarthquakeTrivia.class}, version = 1, exportSchema = false)
 @TypeConverters({LongTypeConverter.class, DoubleTypeConverter.class})
 public abstract class EarthquakeDatabase extends RoomDatabase {
 

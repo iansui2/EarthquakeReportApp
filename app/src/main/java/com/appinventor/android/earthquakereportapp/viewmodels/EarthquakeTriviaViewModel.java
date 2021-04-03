@@ -15,10 +15,10 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class EarthquakeTriviaViewModel extends AndroidViewModel {
 
-    private EarthquakeTriviaRepository earthquakeTriviaRepository;
-    private LiveData<List<EarthquakeTrivia>> earthquakeTriviaObservableData;
+    private final EarthquakeTriviaRepository earthquakeTriviaRepository;
+    private final LiveData<List<EarthquakeTrivia>> earthquakeTriviaObservableData;
 
-    private CompositeDisposable disposables;
+    private final CompositeDisposable disposables;
 
     public EarthquakeTriviaViewModel(@NonNull Application application) {
         super(application);

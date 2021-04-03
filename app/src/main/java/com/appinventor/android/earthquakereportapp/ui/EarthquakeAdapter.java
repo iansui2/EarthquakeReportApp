@@ -1,6 +1,5 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;

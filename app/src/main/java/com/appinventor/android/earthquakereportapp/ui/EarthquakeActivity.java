@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -33,13 +31,6 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
 import java.util.Objects;
-
-import javax.inject.Inject;
-
-import dagger.hilt.android.AndroidEntryPoint;
-
-import static com.appinventor.android.earthquakereportapp.network.ConnectivityUtil.*;
-import static com.appinventor.android.earthquakereportapp.variables.Constants.LOG_TAG;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
@@ -264,6 +255,7 @@ public class EarthquakeActivity extends AppCompatActivity {
                 });
             }
         });
+
         earthquakeViewModel.callEarthquakeObservableInRepository();
     }
 

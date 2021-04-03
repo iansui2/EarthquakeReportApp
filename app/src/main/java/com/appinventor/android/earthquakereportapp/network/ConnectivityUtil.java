@@ -12,11 +12,7 @@ import com.appinventor.android.earthquakereportapp.util.ContextGetter;
 
 import java.net.URL;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.net.ssl.HttpsURLConnection;
-
-import static com.appinventor.android.earthquakereportapp.util.ContextGetter.getAppContext;
 
 
 public class ConnectivityUtil {

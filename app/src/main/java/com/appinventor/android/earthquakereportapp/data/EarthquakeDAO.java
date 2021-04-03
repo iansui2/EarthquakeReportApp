@@ -9,12 +9,12 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeRoom;
-import com.appinventor.android.earthquakereportapp.pojo.EarthquakeTrivia;
 
 import java.util.List;
 
 @Dao
 public interface EarthquakeDAO {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertEarthquake(EarthquakeRoom earthquake);
 

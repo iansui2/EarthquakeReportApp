@@ -1,5 +1,9 @@
 package com.appinventor.android.earthquakereportapp.ui;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,14 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-
 import com.appinventor.android.earthquakereportapp.R;
 import com.appinventor.android.earthquakereportapp.data.EarthquakeTriviaRepository;
-import com.appinventor.android.earthquakereportapp.viewmodels.EarthquakeTriviaViewModel;
 import com.appinventor.android.earthquakereportapp.pojo.EarthquakeTrivia;
+import com.appinventor.android.earthquakereportapp.viewmodels.EarthquakeTriviaViewModel;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;

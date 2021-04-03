@@ -9,8 +9,6 @@ import androidx.room.TypeConverters;
 import com.appinventor.android.earthquakereportapp.converters.DoubleTypeConverter;
 import com.appinventor.android.earthquakereportapp.converters.LongTypeConverter;
 
-import retrofit2.Converter;
-
 @Entity(tableName = "earthquake", indices = {@Index(value = {"mag", "place", "time", "url",
 "felt", "tsunami", "longitude", "latitude", "depth"}, unique = true)})
 public class EarthquakeRoom {

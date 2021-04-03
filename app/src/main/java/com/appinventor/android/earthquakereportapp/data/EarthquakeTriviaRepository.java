@@ -15,7 +15,6 @@ public class EarthquakeTriviaRepository {
 
     private EarthquakeDatabase database;
     private LiveData<List<EarthquakeTrivia>> allTrivia;
-    private EarthquakeTriviaDataSource earthquakeTriviaDataSource;
 
     public EarthquakeTriviaRepository(Context context) {
         database = EarthquakeDatabase.getInstance(context);
@@ -98,15 +97,6 @@ public class EarthquakeTriviaRepository {
                         "is often differentiated from earthquake prediction. Earthquake forecasting is concerned with the " +
                                 "probabilistic assessment of general earthquake hazard, including the frequency and magnitude of " +
                                 "damaging earthquakes in a given area over years or decades."));
-
-//            List<EarthquakeTrivia> earthquakeTriviaList = earthquakeTriviaDataSource.getTriviaFromWikipedia();
-//            for(int i=0; i < earthquakeTriviaList.size(); i++) {
-//                String title = earthquakeTriviaList.get(i).getTitle();
-//                String extract = earthquakeTriviaList.get(i).getExtract();
-//
-//                EarthquakeTrivia earthquakeTrivia = new EarthquakeTrivia(title, extract);
-//                database.earthquakeTriviaDAO().insertTrivia(earthquakeTrivia);
-//            }
         }).subscribeOn(Schedulers.io());
     }
 

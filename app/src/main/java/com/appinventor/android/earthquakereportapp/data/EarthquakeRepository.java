@@ -7,7 +7,6 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 
-import com.appinventor.android.earthquakereportapp.converters.LongTypeConverter;
 import com.appinventor.android.earthquakereportapp.network.ApiInterface;
 import com.appinventor.android.earthquakereportapp.network.ConnectivityInterceptor;
 import com.appinventor.android.earthquakereportapp.pojo.Earthquake;
@@ -25,13 +24,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -41,7 +36,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.appinventor.android.earthquakereportapp.network.ConnectivityUtil.*;
 import static com.appinventor.android.earthquakereportapp.variables.Constants.LOG_TAG;
 
 public class EarthquakeRepository {
